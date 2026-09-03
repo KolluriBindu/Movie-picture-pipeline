@@ -21,13 +21,14 @@ jobs:
           node-version-file: starter/frontend/.nvmrc
           cache: npm
           cache-dependency-path: starter/frontend/package-lock.json
+
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         working-directory: starter/frontend
@@ -49,13 +50,14 @@ jobs:
           node-version-file: starter/frontend/.nvmrc
           cache: npm
           cache-dependency-path: starter/frontend/package-lock.json
-          - name: Cache dependencies
-            uses: actions/cache@v4
-            with:
-              path: ~/.npm
-              key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
-              restore-keys: |
-                ${{ runner.os }}-node-
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         working-directory: starter/frontend
@@ -63,16 +65,13 @@ jobs:
 
       - name: Run tests
         working-directory: starter/frontend
-        run: CI=true npm test -- --watchAll=false
+        run: npm test -- --watchAll=false
 
   build:
     needs:
       - lint
       - test
     runs-on: ubuntu-latest
-    env:
-      REACT_APP_MOVIE_API_URL: http://localhost:5000
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -83,25 +82,19 @@ jobs:
           node-version-file: starter/frontend/.nvmrc
           cache: npm
           cache-dependency-path: starter/frontend/package-lock.json
-          - name: Cache dependencies
-            uses: actions/cache@v4
-            with:
-              path: ~/.npm
-              key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
-              restore-keys: |
-                ${{ runner.os }}-node-
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('starter/frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         working-directory: starter/frontend
         run: npm ci
 
-      - name: Run tests
-        working-directory: starter/frontend
-        run: CI=true npm test -- --watchAll=false
-
       - name: Build Docker image
         working-directory: starter/frontend
-        run: |
-          docker build \
-            --build-arg REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL \
-            --tag mp-frontend:latest .
+        run: docker build --tag mp-frontend:latest .
